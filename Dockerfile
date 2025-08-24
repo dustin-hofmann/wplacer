@@ -37,16 +37,17 @@ RUN chown -R wplacer:nodejs /app
 # Switch to non-root user
 USER wplacer
 
-# Expose port
-EXPOSE 80
+# Expose port (default to 5678 to match .env)
+EXPOSE 5678
 
-# Set default environment
+# Set default environment (will be overridden by .env)
 ENV NODE_ENV=production
-ENV PORT=80
+ENV PORT=5678
+ENV HOST=0.0.0.0
 
 # Add healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:$PORT/ || exit 1
 
-# Start the application
-CMD ["node", "server.js"]
+# Start the application with .env support
+CMD ["node", "--env-file=.env", "server.js"]

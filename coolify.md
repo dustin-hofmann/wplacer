@@ -7,7 +7,8 @@ DOCKER_COMPOSE_PATH=./docker-compose.yml
 
 # Environment Variables for Coolify
 NODE_ENV=production
-PORT=80
+PORT=5678
+HOST=0.0.0.0
 
 # Health Check
 HEALTH_CHECK_PATH=/
@@ -36,16 +37,21 @@ HEALTH_CHECK_START_PERIOD=40
 ## Umgebungsvariablen für Coolify
 # Setze diese Variablen in der Coolify-UI:
 
+# ```
 # NODE_ENV=production
-# PORT=80
+# PORT=5678
+# HOST=0.0.0.0
+# ```
 
 ## Build-Konfiguration
 # - **Dockerfile**: `./Dockerfile`
 # - **Build Context**: Root-Verzeichnis
-# - **Port**: 80 (Standard, kann über PORT-Variable geändert werden)
+# - **Port**: 5678 (wie in .env definiert)
+# - **Health Check Port**: 5678
 
 ## Gesundheitschecks
 # - **Pfad**: `/` (Root-Route)
+# - **Port**: 5678
 # - **Intervall**: 30 Sekunden
 # - **Timeout**: 10 Sekunden
 # - **Wiederholungen**: 3
@@ -56,23 +62,30 @@ HEALTH_CHECK_START_PERIOD=40
 # - Anwendungsdaten
 # - Log-Dateien (`logs.log`, `errors.log`)
 
+## Port-Konfiguration WICHTIG!
+# ⚠️ **Der Service läuft auf Port 5678, nicht auf Port 80!**
+# - Stelle sicher, dass Coolify den Service auf Port 5678 erwartet
+# - Die .env-Datei definiert PORT=5678
+# - Alle Docker-Konfigurationen sind auf Port 5678 ausgelegt
+
 ## Deployment-Notizen für Coolify
 # 1. **Domain**: Konfiguriere Domain/Subdomain in Coolify
-# 2. **SSL**: Wird automatisch von Coolify verwaltet
-# 3. **Logs**: Verfügbar über Coolify-Interface oder in `/app/data/`
-# 4. **Updates**: Push zu GitHub löst automatisches Rebuild aus
-# 5. **Rollback**: Über Coolify-Interface verfügbar
+# 2. **Port**: Stelle sicher, dass Coolify Port 5678 verwendet
+# 3. **SSL**: Wird automatisch von Coolify verwaltet
+# 4. **Logs**: Verfügbar über Coolify-Interface oder in `/app/data/`
+# 5. **Updates**: Push zu GitHub löst automatisches Rebuild aus
+# 6. **Rollback**: Über Coolify-Interface verfügbar
 
 ## Behobene Probleme
-# - ✅ Healthcheck verwendet jetzt `curl` statt `wget`
-# - ✅ Entfernt `--env-file=.env` aus package.json
-# - ✅ Verbesserte Container-Berechtigungen
-# - ✅ Flexiblere Port-Konfiguration
-# - ✅ Optimierte .dockerignore für schnellere Builds
+# - ✅ Port-Konfiguration von 80 auf 5678 geändert (entspricht .env)
+# - ✅ .env-Datei Support wieder aktiviert
+# - ✅ HOST auf 0.0.0.0 gesetzt für externe Erreichbarkeit
+# - ✅ Healthcheck verwendet curl auf Port 5678
+# - ✅ Alle Docker-Konfigurationen konsistent auf Port 5678
 
 ## Troubleshooting
 # Falls der Container nicht startet:
-# 1. Prüfe Logs in Coolify-Interface
-# 2. Überprüfe Umgebungsvariablen
-# 3. Stelle sicher, dass Port 80 nicht blockiert ist
-# 4. Kontrolliere Healthcheck-Status
+# 1. Prüfe, ob Coolify Port 5678 verwendet (nicht 80)
+# 2. Überprüfe Logs in Coolify-Interface
+# 3. Stelle sicher, dass .env-Datei korrekt gelesen wird
+# 4. Kontrolliere Healthcheck-Status auf Port 5678

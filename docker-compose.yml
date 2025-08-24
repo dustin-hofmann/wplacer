@@ -6,14 +6,15 @@ services:
     container_name: wplacer
     restart: unless-stopped
     ports:
-      - "${PORT:-80}:${PORT:-80}"
+      - "5678:5678"
     environment:
       - NODE_ENV=production
-      - PORT=${PORT:-80}
+      - PORT=5678
+      - HOST=0.0.0.0
     volumes:
       - wplacer_data:/app/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${PORT:-80}/"]
+      test: ["CMD", "curl", "-f", "http://localhost:5678/"]
       interval: 30s
       timeout: 10s
       retries: 3
