@@ -1,0 +1,19 @@
+# Add these lines to .dockerignore
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+LEIAME.md
+LISEZMOI.md
+LICENSE
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+start.bat
+update.bat
+brave_opener/
+LOAD_UNPACKED/
+*.log
