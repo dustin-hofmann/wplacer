@@ -1,6 +1,6 @@
 FROM node:22-alpine
 
-# Install system dependencies for canvas
+# Install system dependencies for canvas and healthchecks
 RUN apk add --no-cache \
     cairo-dev \
     jpeg-dev \
@@ -9,7 +9,8 @@ RUN apk add --no-cache \
     gcc \
     g++ \
     make \
-    python3
+    python3 \
+    curl
 
 # Set working directory
 WORKDIR /app
@@ -23,8 +24,18 @@ RUN npm ci --only=production
 # Copy application code
 COPY . .
 
-# Create data directory
+# Create data directory with proper permissions
 RUN mkdir -p ./data
+
+# Create non-root user first
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S wplacer -u 1001
+
+# Change ownership of app directory
+RUN chown -R wplacer:nodejs /app
+
+# Switch to non-root user
+USER wplacer
 
 # Expose port
 EXPOSE 80
@@ -33,13 +44,9 @@ EXPOSE 80
 ENV NODE_ENV=production
 ENV PORT=80
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S wplacer -u 1001
-
-# Change ownership of app directory
-RUN chown -R wplacer:nodejs /app
-USER wplacer
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:$PORT/ || exit 1
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

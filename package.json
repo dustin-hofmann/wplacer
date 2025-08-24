@@ -4,7 +4,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env ."
+    "start": "node server.js"
   },
   "dependencies": {
     "canvas": "^3.2.0",
